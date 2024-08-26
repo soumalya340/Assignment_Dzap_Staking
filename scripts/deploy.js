@@ -5,9 +5,11 @@ async function main() {
   const DzapNFTStakingFactory = await ethers.getContractFactory(
     "DzapNFTStaking"
   );
-  const stake = await upgrades.deployProxy(DzapNFTStakingFactory, [42]);
+  const stake = await upgrades.deployProxy(DzapNFTStakingFactory, [], {
+    initializer: "initialize",
+  });
   await stake.waitForDeployment();
-  console.log("DzapNFTStaking deployed to:", await box.getAddress());
+  console.log("DzapNFTStaking deployed to:", await stake.getAddress());
 }
 
 main();
