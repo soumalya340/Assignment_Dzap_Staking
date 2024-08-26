@@ -1,5 +1,16 @@
 # DzapNFTStaking
 
+1. [Contracts](#contracts)
+   - [DzapNFTStaking.sol](#dzapnftstakingsol)
+   - [Mock Contracts](#mock-contracts)
+2. [Deployed Contracts](#deployed-contracts)
+3. [Features](#features)
+4. [Development](#development)
+5. [Deployment](#deployment)
+6. [Testing](#testing)
+7. [Contract Details](#contract-details)
+8. [License](#license)
+
 DzapNFTStaking is a smart contract that allows users to stake NFTs and earn ERC20 token rewards. This project implements an upgradeable NFT staking system using OpenZeppelin's upgradeable contracts.
 
 ## Contracts
