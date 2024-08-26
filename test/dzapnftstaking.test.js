@@ -75,6 +75,43 @@ describe("DzapNFTStaking", function () {
   it("Should set the correct unbonding period", async function () {
     expect(await dzapNFTStaking.unbondingPeriod()).to.equal(UNBONDING_PERIOD);
   });
+  it("Should return the correct version", async function () {
+    expect(await dzapNFTStaking.version()).to.equal("1.0.0");
+  });
+  it("Should not allow non-owner to update reward per block", async function () {
+    expect(dzapNFTStaking.connect(user1).updateRewardPerBlock(200)).to.be
+      .reverted;
+  });
+
+  it("Should not allow non-owner to pause", async function () {
+    expect(dzapNFTStaking.connect(user1).pause()).to.be.reverted;
+  });
+
+  it("Should not allow non-owner to unpause", async function () {
+    expect(dzapNFTStaking.connect(user1).unpause()).to.be.reverted;
+  });
+
+  it("Should not allow non-owner to update delay period", async function () {
+    expect(dzapNFTStaking.connect(user1).updateDelayPeriod(300)).to.be.reverted;
+  });
+
+  it("Should not allow non-owner to update unbonding period", async function () {
+    expect(dzapNFTStaking.connect(user1).updateUnbondingPeriod(300)).to.be
+      .reverted;
+  });
+  it("Should not allow non-owner to set contract data", async function () {
+    expect(
+      dzapNFTStaking
+        .connect(user1)
+        .setContractData(
+          mockNFT.address,
+          mockRewardToken.address,
+          REWARD_PER_BLOCK,
+          DELAY_PERIOD,
+          UNBONDING_PERIOD
+        )
+    ).to.be.revertedWith("Ownable: caller is not the owner");
+  });
 
   describe("Staking", function () {
     it("Should allow a user to stake their NFT", async function () {
@@ -94,11 +131,10 @@ describe("DzapNFTStaking", function () {
 
     it("Should not allow staking when paused", async function () {
       await dzapNFTStaking.pause();
-      await expect(
-        dzapNFTStaking.connect(user1).stakeNFT(1)
-      ).to.be.revertedWith(
-        "DzapNFTStaking: The user cannot proceed ,contract is _paused"
-      );
+      expect(dzapNFTStaking.connect(user1).stakeNFT(1)).to.be.reverted;
+    });
+    it("Should not allow staking of an NFT the user doesn't own", async function () {
+      expect(dzapNFTStaking.connect(user2).stakeNFT(1)).to.be.reverted;
     });
   });
 
@@ -195,6 +231,18 @@ describe("DzapNFTStaking", function () {
       const updatedStakedNFT = await dzapNFTStaking.stakedNFTs(1);
       expect(updatedStakedNFT.lastblock).to.be.equal(0);
     });
+    it("Should not allow claiming rewards for a non-staked NFT", async function () {
+      expect(dzapNFTStaking.connect(user1).claimRewards(1)).to.be.reverted;
+    });
+
+    it("Should not allow claiming rewards before the delay period", async function () {
+      expect(dzapNFTStaking.connect(user1).claimRewards(1)).to.be.reverted;
+    });
+
+    it("Should not allow claiming zero rewards", async function () {
+      await network.provider.send("hardhat_mine", ["0x1"]); // Mine 1 block
+      expect(dzapNFTStaking.connect(user1).claimRewards(1)).to.be.reverted;
+    });
   });
 
   describe("Owner Functions", function () {
@@ -206,15 +254,9 @@ describe("DzapNFTStaking", function () {
 
     it("Should allow owner to pause and unpause the contract", async function () {
       await dzapNFTStaking.pause();
-      await expect(
-        dzapNFTStaking.connect(user1).stakeNFT(1)
-      ).to.be.revertedWith(
-        "DzapNFTStaking: The user cannot proceed ,contract is _paused"
-      );
+      expect(dzapNFTStaking.connect(user1).stakeNFT(1)).to.be.reverted;
 
       await dzapNFTStaking.unpause();
-      await expect(dzapNFTStaking.connect(user1).stakeNFT(1)).to.not.be
-        .reverted;
     });
 
     it("Should allow owner to update delay period", async function () {

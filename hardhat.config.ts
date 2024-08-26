@@ -6,7 +6,7 @@ import "@nomiclabs/hardhat-truffle5";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
 import "@openzeppelin/hardhat-upgrades";
-
+import "solidity-docgen";
 import "@nomicfoundation/hardhat-toolbox";
 
 import { task } from "hardhat/config";
