@@ -3,13 +3,11 @@ import dotenv from "dotenv";
 dotenv.config();
 import "@nomicfoundation/hardhat-verify";
 import "@nomiclabs/hardhat-truffle5";
-import "@nomiclabs/hardhat-waffle";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
 import "@openzeppelin/hardhat-upgrades";
 
-import "@typechain/hardhat";
-import "@nomiclabs/hardhat-ethers";
+import "@nomicfoundation/hardhat-toolbox";
 
 import { task } from "hardhat/config";
 
@@ -117,4 +115,5 @@ module.exports = {
   mocha: {
     timeout: 20000,
   },
+  skipFiles: ["MockERC20.sol", "MockERC721.sol"],
 };

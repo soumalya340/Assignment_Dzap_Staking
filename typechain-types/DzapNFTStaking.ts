@@ -24,7 +24,7 @@ export interface DzapNFTStakingInterface extends utils.Interface {
     "UPGRADE_INTERFACE_VERSION()": FunctionFragment;
     "claimRewards(uint256)": FunctionFragment;
     "delayPeriod()": FunctionFragment;
-    "initialize(address,address,uint256,uint256,uint256)": FunctionFragment;
+    "initialize()": FunctionFragment;
     "lastClaimTimestamp(address)": FunctionFragment;
     "nftContract()": FunctionFragment;
     "owner()": FunctionFragment;
@@ -33,6 +33,7 @@ export interface DzapNFTStakingInterface extends utils.Interface {
     "renounceOwnership()": FunctionFragment;
     "rewardPerBlock()": FunctionFragment;
     "rewardToken()": FunctionFragment;
+    "setContractData(address,address,uint256,uint256,uint256)": FunctionFragment;
     "stakeNFT(uint256)": FunctionFragment;
     "stakedNFTs(uint256)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
@@ -61,7 +62,7 @@ export interface DzapNFTStakingInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
-    values: [string, string, BigNumberish, BigNumberish, BigNumberish]
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "lastClaimTimestamp",
@@ -88,6 +89,10 @@ export interface DzapNFTStakingInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "rewardToken",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setContractData",
+    values: [string, string, BigNumberish, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "stakeNFT",
@@ -169,6 +174,10 @@ export interface DzapNFTStakingInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "rewardToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setContractData",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "stakeNFT", data: BytesLike): Result;
@@ -306,11 +315,6 @@ export interface DzapNFTStaking extends BaseContract {
     delayPeriod(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     initialize(
-      _nftContract: string,
-      _rewardToken: string,
-      _rewardPerBlock: BigNumberish,
-      _delayPeriod: BigNumberish,
-      _unbondingPeriod: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -336,6 +340,15 @@ export interface DzapNFTStaking extends BaseContract {
     rewardPerBlock(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     rewardToken(overrides?: CallOverrides): Promise<[string]>;
+
+    setContractData(
+      _nftContract: string,
+      _rewardToken: string,
+      _rewardPerBlock: BigNumberish,
+      _delayPeriod: BigNumberish,
+      _unbondingPeriod: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     stakeNFT(
       tokenId: BigNumberish,
@@ -410,11 +423,6 @@ export interface DzapNFTStaking extends BaseContract {
   delayPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
   initialize(
-    _nftContract: string,
-    _rewardToken: string,
-    _rewardPerBlock: BigNumberish,
-    _delayPeriod: BigNumberish,
-    _unbondingPeriod: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -440,6 +448,15 @@ export interface DzapNFTStaking extends BaseContract {
   rewardPerBlock(overrides?: CallOverrides): Promise<BigNumber>;
 
   rewardToken(overrides?: CallOverrides): Promise<string>;
+
+  setContractData(
+    _nftContract: string,
+    _rewardToken: string,
+    _rewardPerBlock: BigNumberish,
+    _delayPeriod: BigNumberish,
+    _unbondingPeriod: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   stakeNFT(
     tokenId: BigNumberish,
@@ -513,14 +530,7 @@ export interface DzapNFTStaking extends BaseContract {
 
     delayPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
-    initialize(
-      _nftContract: string,
-      _rewardToken: string,
-      _rewardPerBlock: BigNumberish,
-      _delayPeriod: BigNumberish,
-      _unbondingPeriod: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    initialize(overrides?: CallOverrides): Promise<void>;
 
     lastClaimTimestamp(
       arg0: string,
@@ -540,6 +550,15 @@ export interface DzapNFTStaking extends BaseContract {
     rewardPerBlock(overrides?: CallOverrides): Promise<BigNumber>;
 
     rewardToken(overrides?: CallOverrides): Promise<string>;
+
+    setContractData(
+      _nftContract: string,
+      _rewardToken: string,
+      _rewardPerBlock: BigNumberish,
+      _delayPeriod: BigNumberish,
+      _unbondingPeriod: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     stakeNFT(tokenId: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
@@ -651,11 +670,6 @@ export interface DzapNFTStaking extends BaseContract {
     delayPeriod(overrides?: CallOverrides): Promise<BigNumber>;
 
     initialize(
-      _nftContract: string,
-      _rewardToken: string,
-      _rewardPerBlock: BigNumberish,
-      _delayPeriod: BigNumberish,
-      _unbondingPeriod: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -681,6 +695,15 @@ export interface DzapNFTStaking extends BaseContract {
     rewardPerBlock(overrides?: CallOverrides): Promise<BigNumber>;
 
     rewardToken(overrides?: CallOverrides): Promise<BigNumber>;
+
+    setContractData(
+      _nftContract: string,
+      _rewardToken: string,
+      _rewardPerBlock: BigNumberish,
+      _delayPeriod: BigNumberish,
+      _unbondingPeriod: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     stakeNFT(
       tokenId: BigNumberish,
@@ -750,11 +773,6 @@ export interface DzapNFTStaking extends BaseContract {
     delayPeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     initialize(
-      _nftContract: string,
-      _rewardToken: string,
-      _rewardPerBlock: BigNumberish,
-      _delayPeriod: BigNumberish,
-      _unbondingPeriod: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -780,6 +798,15 @@ export interface DzapNFTStaking extends BaseContract {
     rewardPerBlock(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     rewardToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    setContractData(
+      _nftContract: string,
+      _rewardToken: string,
+      _rewardPerBlock: BigNumberish,
+      _delayPeriod: BigNumberish,
+      _unbondingPeriod: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     stakeNFT(
       tokenId: BigNumberish,

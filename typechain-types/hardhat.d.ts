@@ -69,29 +69,57 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20__factory>;
     getContractFactory(
+      name: "ERC721",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC721__factory>;
+    getContractFactory(
+      name: "IERC721Metadata",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC721Metadata__factory>;
+    getContractFactory(
       name: "IERC721",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC721__factory>;
+    getContractFactory(
+      name: "IERC721Receiver",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IERC721Receiver__factory>;
     getContractFactory(
       name: "Address",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Address__factory>;
     getContractFactory(
+      name: "ERC165",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC165__factory>;
+    getContractFactory(
       name: "IERC165",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC165__factory>;
+    getContractFactory(
+      name: "Math",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Math__factory>;
     getContractFactory(
       name: "ReentrancyGuard",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ReentrancyGuard__factory>;
     getContractFactory(
+      name: "Strings",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Strings__factory>;
+    getContractFactory(
       name: "DzapNFTStaking",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.DzapNFTStaking__factory>;
     getContractFactory(
-      name: "MyToken",
+      name: "MockERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.MyToken__factory>;
+    ): Promise<Contracts.MockERC20__factory>;
+    getContractFactory(
+      name: "MockERC721",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MockERC721__factory>;
 
     getContractAt(
       name: "OwnableUpgradeable",
@@ -164,35 +192,70 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC20>;
     getContractAt(
+      name: "ERC721",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC721>;
+    getContractAt(
+      name: "IERC721Metadata",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC721Metadata>;
+    getContractAt(
       name: "IERC721",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IERC721>;
+    getContractAt(
+      name: "IERC721Receiver",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IERC721Receiver>;
     getContractAt(
       name: "Address",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Address>;
     getContractAt(
+      name: "ERC165",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC165>;
+    getContractAt(
       name: "IERC165",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.IERC165>;
+    getContractAt(
+      name: "Math",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Math>;
     getContractAt(
       name: "ReentrancyGuard",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.ReentrancyGuard>;
     getContractAt(
+      name: "Strings",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Strings>;
+    getContractAt(
       name: "DzapNFTStaking",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.DzapNFTStaking>;
     getContractAt(
-      name: "MyToken",
+      name: "MockERC20",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.MyToken>;
+    ): Promise<Contracts.MockERC20>;
+    getContractAt(
+      name: "MockERC721",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MockERC721>;
 
     // default types
     getContractFactory(
