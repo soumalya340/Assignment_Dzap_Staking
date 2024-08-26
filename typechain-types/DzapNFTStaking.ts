@@ -9,6 +9,7 @@ import {
   CallOverrides,
   ContractTransaction,
   Overrides,
+  PayableOverrides,
   PopulatedTransaction,
   Signer,
   utils,
@@ -20,12 +21,15 @@ import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 export interface DzapNFTStakingInterface extends utils.Interface {
   contractName: "DzapNFTStaking";
   functions: {
+    "UPGRADE_INTERFACE_VERSION()": FunctionFragment;
     "claimRewards(uint256)": FunctionFragment;
     "delayPeriod()": FunctionFragment;
+    "initialize(address,address,uint256,uint256,uint256)": FunctionFragment;
     "lastClaimTimestamp(address)": FunctionFragment;
     "nftContract()": FunctionFragment;
     "owner()": FunctionFragment;
     "pause()": FunctionFragment;
+    "proxiableUUID()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "rewardPerBlock()": FunctionFragment;
     "rewardToken()": FunctionFragment;
@@ -38,9 +42,15 @@ export interface DzapNFTStakingInterface extends utils.Interface {
     "updateDelayPeriod(uint256)": FunctionFragment;
     "updateRewardPerBlock(uint256)": FunctionFragment;
     "updateUnbondingPeriod(uint256)": FunctionFragment;
+    "upgradeToAndCall(address,bytes)": FunctionFragment;
+    "version()": FunctionFragment;
     "withdrawNFT(uint256)": FunctionFragment;
   };
 
+  encodeFunctionData(
+    functionFragment: "UPGRADE_INTERFACE_VERSION",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "claimRewards",
     values: [BigNumberish]
@@ -48,6 +58,10 @@ export interface DzapNFTStakingInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "delayPeriod",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "initialize",
+    values: [string, string, BigNumberish, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "lastClaimTimestamp",
@@ -59,6 +73,10 @@ export interface DzapNFTStakingInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "proxiableUUID",
+    values?: undefined
+  ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
@@ -105,10 +123,19 @@ export interface DzapNFTStakingInterface extends utils.Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "upgradeToAndCall",
+    values: [string, BytesLike]
+  ): string;
+  encodeFunctionData(functionFragment: "version", values?: undefined): string;
+  encodeFunctionData(
     functionFragment: "withdrawNFT",
     values: [BigNumberish]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "UPGRADE_INTERFACE_VERSION",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "claimRewards",
     data: BytesLike
@@ -117,6 +144,7 @@ export interface DzapNFTStakingInterface extends utils.Interface {
     functionFragment: "delayPeriod",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "lastClaimTimestamp",
     data: BytesLike
@@ -127,6 +155,10 @@ export interface DzapNFTStakingInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "proxiableUUID",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
@@ -164,24 +196,37 @@ export interface DzapNFTStakingInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "upgradeToAndCall",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "version", data: BytesLike): Result;
+  decodeFunctionResult(
     functionFragment: "withdrawNFT",
     data: BytesLike
   ): Result;
 
   events: {
+    "Initialized(uint64)": EventFragment;
     "NFTStaked(address,uint256)": EventFragment;
     "NFTUnstaked(address,uint256)": EventFragment;
     "NFTWithdrawn(address,uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "RewardsClaimed(address,uint256)": EventFragment;
+    "Upgraded(address)": EventFragment;
   };
 
+  getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NFTStaked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NFTUnstaked"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "NFTWithdrawn"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "RewardsClaimed"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Upgraded"): EventFragment;
 }
+
+export type InitializedEvent = TypedEvent<[BigNumber], { version: BigNumber }>;
+
+export type InitializedEventFilter = TypedEventFilter<InitializedEvent>;
 
 export type NFTStakedEvent = TypedEvent<
   [string, BigNumber],
@@ -219,6 +264,10 @@ export type RewardsClaimedEvent = TypedEvent<
 
 export type RewardsClaimedEventFilter = TypedEventFilter<RewardsClaimedEvent>;
 
+export type UpgradedEvent = TypedEvent<[string], { implementation: string }>;
+
+export type UpgradedEventFilter = TypedEventFilter<UpgradedEvent>;
+
 export interface DzapNFTStaking extends BaseContract {
   contractName: "DzapNFTStaking";
   connect(signerOrProvider: Signer | Provider | string): this;
@@ -247,12 +296,23 @@ export interface DzapNFTStaking extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
+    UPGRADE_INTERFACE_VERSION(overrides?: CallOverrides): Promise<[string]>;
+
     claimRewards(
       tokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     delayPeriod(overrides?: CallOverrides): Promise<[BigNumber]>;
+
+    initialize(
+      _nftContract: string,
+      _rewardToken: string,
+      _rewardPerBlock: BigNumberish,
+      _delayPeriod: BigNumberish,
+      _unbondingPeriod: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     lastClaimTimestamp(
       arg0: string,
@@ -266,6 +326,8 @@ export interface DzapNFTStaking extends BaseContract {
     pause(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    proxiableUUID(overrides?: CallOverrides): Promise<[string]>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -324,11 +386,21 @@ export interface DzapNFTStaking extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    version(overrides?: CallOverrides): Promise<[string]>;
+
     withdrawNFT(
       tokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
+
+  UPGRADE_INTERFACE_VERSION(overrides?: CallOverrides): Promise<string>;
 
   claimRewards(
     tokenId: BigNumberish,
@@ -336,6 +408,15 @@ export interface DzapNFTStaking extends BaseContract {
   ): Promise<ContractTransaction>;
 
   delayPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
+  initialize(
+    _nftContract: string,
+    _rewardToken: string,
+    _rewardPerBlock: BigNumberish,
+    _delayPeriod: BigNumberish,
+    _unbondingPeriod: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   lastClaimTimestamp(
     arg0: string,
@@ -349,6 +430,8 @@ export interface DzapNFTStaking extends BaseContract {
   pause(
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
   renounceOwnership(
     overrides?: Overrides & { from?: string | Promise<string> }
@@ -407,18 +490,37 @@ export interface DzapNFTStaking extends BaseContract {
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
+  upgradeToAndCall(
+    newImplementation: string,
+    data: BytesLike,
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  version(overrides?: CallOverrides): Promise<string>;
+
   withdrawNFT(
     tokenId: BigNumberish,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
+    UPGRADE_INTERFACE_VERSION(overrides?: CallOverrides): Promise<string>;
+
     claimRewards(
       tokenId: BigNumberish,
       overrides?: CallOverrides
     ): Promise<void>;
 
     delayPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
+    initialize(
+      _nftContract: string,
+      _rewardToken: string,
+      _rewardPerBlock: BigNumberish,
+      _delayPeriod: BigNumberish,
+      _unbondingPeriod: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     lastClaimTimestamp(
       arg0: string,
@@ -430,6 +532,8 @@ export interface DzapNFTStaking extends BaseContract {
     owner(overrides?: CallOverrides): Promise<string>;
 
     pause(overrides?: CallOverrides): Promise<void>;
+
+    proxiableUUID(overrides?: CallOverrides): Promise<string>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
@@ -478,6 +582,14 @@ export interface DzapNFTStaking extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    version(overrides?: CallOverrides): Promise<string>;
+
     withdrawNFT(
       tokenId: BigNumberish,
       overrides?: CallOverrides
@@ -485,6 +597,9 @@ export interface DzapNFTStaking extends BaseContract {
   };
 
   filters: {
+    "Initialized(uint64)"(version?: null): InitializedEventFilter;
+    Initialized(version?: null): InitializedEventFilter;
+
     "NFTStaked(address,uint256)"(
       user?: string | null,
       tokenId?: null
@@ -520,15 +635,29 @@ export interface DzapNFTStaking extends BaseContract {
       user?: string | null,
       amount?: null
     ): RewardsClaimedEventFilter;
+
+    "Upgraded(address)"(implementation?: string | null): UpgradedEventFilter;
+    Upgraded(implementation?: string | null): UpgradedEventFilter;
   };
 
   estimateGas: {
+    UPGRADE_INTERFACE_VERSION(overrides?: CallOverrides): Promise<BigNumber>;
+
     claimRewards(
       tokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     delayPeriod(overrides?: CallOverrides): Promise<BigNumber>;
+
+    initialize(
+      _nftContract: string,
+      _rewardToken: string,
+      _rewardPerBlock: BigNumberish,
+      _delayPeriod: BigNumberish,
+      _unbondingPeriod: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     lastClaimTimestamp(
       arg0: string,
@@ -542,6 +671,8 @@ export interface DzapNFTStaking extends BaseContract {
     pause(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    proxiableUUID(overrides?: CallOverrides): Promise<BigNumber>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -592,6 +723,14 @@ export interface DzapNFTStaking extends BaseContract {
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    version(overrides?: CallOverrides): Promise<BigNumber>;
+
     withdrawNFT(
       tokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -599,12 +738,25 @@ export interface DzapNFTStaking extends BaseContract {
   };
 
   populateTransaction: {
+    UPGRADE_INTERFACE_VERSION(
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     claimRewards(
       tokenId: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     delayPeriod(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+
+    initialize(
+      _nftContract: string,
+      _rewardToken: string,
+      _rewardPerBlock: BigNumberish,
+      _delayPeriod: BigNumberish,
+      _unbondingPeriod: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     lastClaimTimestamp(
       arg0: string,
@@ -618,6 +770,8 @@ export interface DzapNFTStaking extends BaseContract {
     pause(
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
+
+    proxiableUUID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     renounceOwnership(
       overrides?: Overrides & { from?: string | Promise<string> }
@@ -667,6 +821,14 @@ export interface DzapNFTStaking extends BaseContract {
       _newUnbondingPeriod: BigNumberish,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
+
+    upgradeToAndCall(
+      newImplementation: string,
+      data: BytesLike,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    version(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     withdrawNFT(
       tokenId: BigNumberish,

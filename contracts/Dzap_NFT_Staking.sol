@@ -3,10 +3,17 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
-contract DzapNFTStaking is Ownable, ReentrancyGuard {
+contract DzapNFTStaking is
+    Initializable,
+    OwnableUpgradeable,
+    UUPSUpgradeable,
+    ReentrancyGuard
+{
     IERC721 public nftContract;
     IERC20 public rewardToken;
     uint256 public rewardPerBlock;
@@ -51,13 +58,15 @@ contract DzapNFTStaking is Ownable, ReentrancyGuard {
     event RewardsClaimed(address indexed user, uint256 amount);
     event NFTWithdrawn(address indexed user, uint256 tokenId);
 
-    constructor(
+    function initialize(
         address _nftContract,
         address _rewardToken,
         uint256 _rewardPerBlock,
         uint256 _delayPeriod,
         uint256 _unbondingPeriod
-    ) Ownable(_msgSender()) {
+    ) public initializer {
+        __Ownable_init(msg.sender);
+        __UUPSUpgradeable_init();
         nftContract = IERC721(_nftContract);
         rewardToken = IERC20(_rewardToken);
         rewardPerBlock = _rewardPerBlock;
@@ -191,5 +200,13 @@ contract DzapNFTStaking is Ownable, ReentrancyGuard {
         uint256 _newUnbondingPeriod
     ) external onlyOwner {
         unbondingPeriod = _newUnbondingPeriod;
+    }
+
+    function _authorizeUpgrade(
+        address newImplementation
+    ) internal override onlyOwner {}
+
+    function version() public pure virtual returns (string memory) {
+        return "1.0.0";
     }
 }

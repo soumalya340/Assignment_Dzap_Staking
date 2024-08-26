@@ -6,6 +6,7 @@ import "@nomiclabs/hardhat-truffle5";
 import "@nomiclabs/hardhat-waffle";
 import "hardhat-gas-reporter";
 import "solidity-coverage";
+import "@openzeppelin/hardhat-upgrades";
 
 import "@typechain/hardhat";
 import "@nomiclabs/hardhat-ethers";
