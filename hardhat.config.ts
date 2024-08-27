@@ -26,7 +26,7 @@ const AMOY_RPC_URL =
   process.env.AMOY_RPC_URL || "https://polygon-mumbai.g.alchemy.com/v2/api-key";
 
 const CARDONA_RPC_URL =
-  "https://polygonzkevm-cardona.g.alchemy.com/v2/owht4PVz1OsDlodwQItax87rn2_FmpTu";
+  "https://polygonzkevm-cardona.g.alchemy.com/v2/assfsd";
 
 const SEPOLIA_RPC_URL = process.env.SEPOLIA_RPC_URL || "https://ETH-RPC-URL";
 
@@ -41,7 +41,7 @@ const PRIVATE_KEY = process.env.PRIVATE_KEY;
 const POLYGONSCAN_API_KEY =
   process.env.POLYGONSCAN_API_KEY || "lklsdkskldjklgdklkld";
 
-const POLYGONZKEVMSCAN_API_KEY = "J9HPEMS8DIKTY6UGFASZBGCVWYCDY3NZ3D";
+const POLYGONZKEVMSCAN_API_KEY = "asfsasdffasf";
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || "Etherscan API key";
 const BASESCAN_API_KEY = process.env.BASESCAN_API_KEY || "Basescan API Key";
 
